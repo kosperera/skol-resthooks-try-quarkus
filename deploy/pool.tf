@@ -19,14 +19,14 @@ resource "aws_cognito_user_pool" "pool" {
 
 resource "aws_cognito_user_pool_domain" "domain" {
   domain       = "kitchensync"
-  user_pool_id = aws_cognito_user_pool.pool.id
+  user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 }
 
 resource "aws_cognito_resource_server" "resource" {
   name = "Kitchen sync"
-  # FIXME: identifier   = format("%s%s", "invoke url of the api gateway deployment", "stage name of the api gateway rest api")
+  # FIXME: identifier   = format("%s%s", aws_api_gateway_deployment.this.invoke_url, aws_api_gateway_stage.this.stage_name)
   identifier   = "kitchensync"
-  user_pool_id = aws_cognito_user_pool.pool.id
+  user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 
   scope {
     scope_name        = "read"
@@ -36,7 +36,7 @@ resource "aws_cognito_resource_server" "resource" {
 
 resource "aws_cognito_user_pool_client" "client" {
   name         = "doordash-events"
-  user_pool_id = aws_cognito_user_pool.pool.id
+  user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 
   access_token_validity                = 24
   allowed_oauth_flows_user_pool_client = true
