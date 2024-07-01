@@ -1,64 +1,63 @@
-# Try .NET on AWS
+# skol-resthooks
 
-Start a dev container and get to developing .NET apps leveraging a [variety of Amazon services (or AWS)][aws-services-for-dotnet].
+This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-[<img width="100%" 
-      alt="AWS SDK for .NET" 
-      src="https://github.com/alertbox/try-dotnet-on-aws/assets/958227/befa373d-72c1-4816-ade8-3abba3016b45" />][aws-sdk-for-dotnet]
+If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
 
-[Learn more about AWS SDK for .NET][aws-sdk-for-dotnet]
+## Running the application in dev mode
 
-[aws-services-for-dotnet]: https://github.com/aws/dotnet#readme
-[aws-sdk-for-dotnet]: https://docs.aws.amazon.com/sdk-for-net/v3/developer-guide/welcome.html
+You can run your application in dev mode that enables live coding using:
+```shell script
+./mvnw compile quarkus:dev
+```
 
+> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
 
-## Quick Start
+## Packaging and running the application
 
-[![Open in Dev Container](https://img.shields.io/static/v1?style=for-the-badge&label=Dev+Container&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/alertbox/try-dotnet-on-aws)
+The application can be packaged using:
+```shell script
+./mvnw package
+```
+It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
+Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
 
-You can also run this repo locally by following these repetitive steps:
+The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
 
-1. You want to ensure the repo is cloned to your local machine, and 
-2. Open it in VS Code.
+If you want to build an _über-jar_, execute the following command:
+```shell script
+./mvnw package -Dquarkus.package.jar.type=uber-jar
+```
 
+The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
 
+## Creating a native executable
 
->  See [.NET Docker Images][dotnet-docker-images] for other variations that suites your hardware.
+You can create a native executable using: 
+```shell script
+./mvnw package -Dnative
+```
 
-[dotnet-docker-images]: https://hub.docker.com/_/microsoft-dotnet-sdk/
+Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
+```shell script
+./mvnw package -Dnative -Dquarkus.native.container-build=true
+```
 
+You can then execute your native executable with: `./target/skol-resthooks-1.0.0-SNAPSHOT-runner`
 
+If you want to learn more about building native executables, please consult https://quarkus.io/guides/maven-tooling.
 
-## Troubleshooting
+## Related Guides
 
-If you have any technical problems with dev containers, you are better off asking [Dev Containers Support][devcontainers-support] directly, since you'll end up getting a much faster response back that way.
+- REST ([guide](https://quarkus.io/guides/rest)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
+- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
+- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
+- Amazon EventBridge ([guide](https://docs.quarkiverse.io/quarkus-amazon-services/dev/amazon-eventbridge.html)): Connect to Amazon EventBridge service
 
-[devcontainers-support]: https://github.com/devcontainers/community/discussions/3
+## Provided Code
 
+### REST
 
+Easily start your REST Web Services
 
-### Known Issues
-
-- https://github.com/omnisharp/omnisharp-vscode/issues/4348
-- https://github.com/devcontainers/features/issues/440
-- https://github.com/microsoft/vscode-dotnettools/issues/562
-- https://github.com/aws/aws-lambda-dotnet/issues/1611
-
-
-
-## Contributing
-
-The official repo to contribute would be [@devcontainers][devcontainers-repo].
-
-Have a suggestion or a bug fix? Just open a pull request or an issue. Include clear and simple instructions possible.
-
-[devcontainers-repo]: https://github.com/devcontainers
-
-
-
-## License
-
-Copyright &copy; Alertbox, Inc. (@alertbox). All rights reserved.
-
-The source code is license under the [MIT license](#MIT-1-ov-file).
-
+[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
