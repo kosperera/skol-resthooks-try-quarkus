@@ -27,6 +27,10 @@ module "terraform_state" {
       }
     }
   }
+
+  versioning = {
+    enabled = true
+  }
 }
 
 # Source https://github.com/terraform-aws-modules/terraform-aws-dynamodb-table
