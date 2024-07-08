@@ -1,0 +1,27 @@
+POST https://kitchensync.auth.us-east-1.amazoncognito.com/oauth2/token HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+# Authorization: Basic {{$dotenv SAMPLE_CLIENT_ID}} {{$dotenv SAMPLE_CLIENT_SECRET}}
+
+grant_type=client_credentials
+&scope=kitchensync/post
+&client_id={{$dotenv SAMPLE_CLIENT_ID}}
+&client_secret={{$dotenv SAMPLE_CLIENT_SECRET}}
+
+###
+
+POST https://{{$dotenv HOST}}/v1/kitchen/messaging/ingress HTTP/1.1
+Content-Type: application/json
+X-API-KEY: {{$dotenv HOST_API_KEY}}
+
+<@ ./sample-order.json
+
+###
+
+POST https://{{$dotenv APIGATEWAY}}/v1/messaging/publish HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer eyJraWQiOiJGbDZtOGpncGxCczFSalk4RGNVWUxHWk5GZk0wYXhvcjFQbE9SKzgybXB3PSIsImFsZyI6IlJTMjU2In0.eyJzdWIiOiIzYXU5ZDluYWJhb2xlMzI4YWxoNzM3ZzBzbyIsInRva2VuX3VzZSI6ImFjY2VzcyIsInNjb3BlIjoia2l0Y2hlbnN5bmNcL3Bvc3QiLCJhdXRoX3RpbWUiOjE3MjA0MjI1ODQsImlzcyI6Imh0dHBzOlwvXC9jb2duaXRvLWlkcC51cy1lYXN0LTEuYW1hem9uYXdzLmNvbVwvdXMtZWFzdC0xX1dqbHJQMWpxNyIsImV4cCI6MTcyMDUwODk4NCwiaWF0IjoxNzIwNDIyNTg0LCJ2ZXJzaW9uIjoyLCJqdGkiOiJlMzE4Y2Q0YS01NmU1LTQ0YzItOGQ3Ny02ZjcyMjMwZTE2NjgiLCJjbGllbnRfaWQiOiIzYXU5ZDluYWJhb2xlMzI4YWxoNzM3ZzBzbyJ9.kF_dR9hw3XumsZfxseEQwa_2qxoDhe5u4MzmUhkqydXcSqveCYPW9nqhggpryyQnuqHfJDc7Ww6TOGEwcOv9a_oQQpoGPnvUe_yhqI9xkOdPvV1MLixyN5ZbnUZFH6i01E6uaKHaz2auDGustgIemL-I3yNgz7WEN0gFuT2EaeRP-3em2EBSYM6x2SemPLaBbWm7-NOa9E_84npAPhCm4ptbTlqYIWZZWb89doltpdi0A3r8hS1r0DBR4Nj80UBphR__whUIiq6lY5Tn0UPcAzYTgcC6H8ND1IDvO1O6xKml-K4-si4eX6NlDyxt6FuzI-S5SmlyVAMViL0dGulmYg
+X-SOURCE: doordash
+X-EVENT-KIND: Order.Notification
+X-ENVIRONMENT: Sandbox
+
+<@ ./sample-order.json

@@ -29,8 +29,8 @@ resource "aws_cognito_resource_server" "resource" {
   user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 
   scope {
-    scope_name        = "read"
-    scope_description = "Read notifications"
+    scope_name        = "post"
+    scope_description = "Publish notifications"
   }
 }
 

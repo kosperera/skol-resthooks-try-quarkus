@@ -1,8 +1,0 @@
-POST https://kitchensync.auth.us-east-1.amazoncognito.com/oauth2/token HTTP/1.1
-Content-Type: application/x-www-form-urlencoded
-# Authorization: Basic 6585eq1j12b84tnk3rbac7v6fp mcnq8gm0gs2r5a753vhmtf4uc1fo4rgenqsf622l0aj7fai0g7r
-
-grant_type=client_credentials
-&scope=kitchensync/read
-&client_id=6585eq1j12b84tnk3rbac7v6fp
-&client_secret=mcnq8gm0gs2r5a753vhmtf4uc1fo4rgenqsf622l0aj7fai0g7r
