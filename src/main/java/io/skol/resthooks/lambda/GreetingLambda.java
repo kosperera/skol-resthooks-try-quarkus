@@ -1,0 +1,10 @@
+package io.skol.resthooks.lambda;
+
+import com.amazonaws.services.lambda.runtime.Context;
+import com.amazonaws.services.lambda.runtime.RequestHandler;
+
+public class GreetingLambda implements RequestHandler<Person, String> {
+
+  @Override
+  public String handleRequest(Person input, Context context) -> "Hello " + input.name();
+}

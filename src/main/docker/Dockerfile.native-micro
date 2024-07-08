@@ -10,11 +10,11 @@
 #
 # Then, build the image with:
 #
-# docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/skol-resthooks .
+# docker build -f src/main/docker/Dockerfile.native-micro -t quarkus/skol-kitchensync .
 #
 # Then run the container using:
 #
-# docker run -i --rm -p 8080:8080 quarkus/skol-resthooks
+# docker run -i --rm -p 8080:8080 quarkus/skol-kitchensync
 #
 ###
 FROM quay.io/quarkus/quarkus-micro-image:2.0

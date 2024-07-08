@@ -31,12 +31,6 @@ indent_size = 2
 [*.md]
 trim_trailing_whitespace = false
 
-# Java files
-[*.{java}]
-# Indentation and spacing
-indent_size = 4
-tab_width = 4
-
 [Makefile]
 tab_width = 2
 indent_style = tab
