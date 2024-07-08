@@ -35,7 +35,7 @@ resource "aws_cognito_resource_server" "resource" {
 }
 
 resource "aws_cognito_user_pool_client" "client" {
-  name         = "doordash-events"
+  name         = "some-backend-api"
   user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 
   access_token_validity                = 24
