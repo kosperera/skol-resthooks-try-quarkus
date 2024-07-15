@@ -56,7 +56,7 @@ If you want to learn more about building native executables, please consult <htt
 ## Related Guides
 
 - AWS Lambda ([guide](https://quarkus.io/guides/aws-lambda)): Write AWS Lambda functions
-- Amazon EventBridge ([guide](https://docs.quarkiverse.io/quarkus-amazon-services/dev/amazon-eventbridge.html)): Connect to Amazon EventBridge service
+- Amazon S3 ([guide](https://docs.quarkiverse.io/quarkus-amazon-services/dev/amazon-s3.html)): Connect to Amazon S3 cloud storage
 - Amazon SQS ([guide](https://docs.quarkiverse.io/quarkus-amazon-services/dev/amazon-sqs.html)): Connect to Amazon SQS messaging queue service
 
 ## Provided Code

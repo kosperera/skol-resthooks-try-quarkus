@@ -1,6 +1,6 @@
 # Source https://www.kitopi.com/post/authorization-in-machine-to-machine-integrations-using-amazon-cognito
 resource "aws_cognito_user_pool" "pool" {
-  name = "usp-skol-kitchensync-01"
+  name = "sb-usp-kitchensync-mtomauth-01"
 
   account_recovery_setting {
     recovery_mechanism {
@@ -35,7 +35,7 @@ resource "aws_cognito_resource_server" "resource" {
 }
 
 resource "aws_cognito_user_pool_client" "client" {
-  name         = "some-backend-api"
+  name         = "sb-upc-kitchensync-somesubscriber-01"
   user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 
   access_token_validity                = 24
