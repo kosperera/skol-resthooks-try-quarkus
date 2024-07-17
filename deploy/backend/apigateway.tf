@@ -48,7 +48,7 @@ module "apigateway" {
       authorization_scopes = aws_cognito_resource_server.resource.scope_identifiers
 
       integration = {
-        uri                    = module.backend-func.lambda_function_arn
+        uri                    = module.lambda_receiver.lambda_function_arn
         payload_format_version = "2.0"
       }
     }

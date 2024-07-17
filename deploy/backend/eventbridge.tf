@@ -1,6 +1,7 @@
 module "eventbridge" {
   source = "terraform-aws-modules/eventbridge/aws"
 
+  # create_bus = false
   bus_name = "sb-evb-kitchensync-messagingbus-01"
 
   rules = {
@@ -81,6 +82,42 @@ module "eventbridge" {
         }
       }
     }
+  }
+}
+
+module "default_bridge" {
+  source = "terraform-aws-modules/eventbridge/aws"
+
+  create_bus = false
+
+  rules = {
+    large_notifications = {
+      description = "Captures all created order notifications (bulk or large payloads)",
+      event_pattern = jsonencode({
+        "source" : ["aws.s3"],
+        "detail-type" : ["Object Created"]
+        "detail" : { "bucket" : { "name" : [module.s3_bucket.s3_bucket_id] } }
+      })
+      state = "ENABLED"
+    }
+  }
+
+  # Send to a Queue.
+  targets = {
+    large_notifications = [
+      {
+        name            = "send-to-lambdafn-queue"
+        arn             = module.sqs_lambdafn.queue_arn
+        dead_letter_arn = module.sqs_lambdafn.dead_letter_queue_arn
+        target_id       = "send-to-lambdafn-queue"
+      },
+      {
+        name            = "send-to-lambdawebapi-queue"
+        arn             = module.sqs_lambdawebapi.queue_arn
+        dead_letter_arn = module.sqs_lambdawebapi.dead_letter_queue_arn
+        target_id       = "send-to-lambdawebapi-queue"
+      }
+    ]
   }
 }
 

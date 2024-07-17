@@ -3,6 +3,6 @@ variable "backend_api_host" {
 }
 
 variable "backend_api_key" {
-  type = string
+  type      = string
   sensitive = true
 }
