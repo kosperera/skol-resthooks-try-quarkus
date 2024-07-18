@@ -19,10 +19,10 @@ public class ReceiveEventHandler
         implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
     @Inject
-    private S3Client s3;
+    S3Client s3;
 
     @Inject
-    private ObjectMapper serializer;
+    ObjectMapper serializer;
 
     @Override
     public APIGatewayV2HTTPResponse handleRequest(final APIGatewayV2HTTPEvent input,
@@ -35,9 +35,9 @@ public class ReceiveEventHandler
             // final Event im = this.serializer.readValue(content, Event.class);
 
             // final S3Client s3 = S3Client.builder().useArnRegion(true).build();
-            final PutObjectRequest request =
-                    PutObjectRequest.builder().bucket("sb-s3-kitchensync-receiver-01")
-                            .key("file-name-" + reqId + ".json").build();
+            final PutObjectRequest request = PutObjectRequest.builder()
+                    .bucket("sb-s3-kitchensync-receiver-01").key("file-name-" + reqId + ".json")
+                    .contentType("application/json").build();
 
             // s3.putObject(request, RequestBody.fromString(content));
             final Ack ack = new Ack(UUID.fromString(reqId), content);

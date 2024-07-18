@@ -23,66 +23,51 @@ module "lambda_receiver" {
   environment_variables = {
     BUCKET_NAME = module.s3_bucket.s3_bucket_id
   }
+
   create_role = true
 }
 
-module "s3_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
+# data "aws_iam_policy_document" "endpoint" {
+#   statement {
+#     sid = "RestrictBucketAccessToIAMRole"
 
-  bucket = "sb-s3-kitchensync-receiver-01"
+#     principals {
+#       type        = "AWS"
+#       identifiers = ["*"]
+#     }
 
-  attach_policy = true
-  policy        = data.aws_iam_policy_document.bucket.json
-}
+#     actions = [
+#       "s3:PutObject",
+#     ]
 
-module "s3_notify" {
-  source = "terraform-aws-modules/s3-bucket/aws//modules/notification"
+#     resources = [
+#       "${module.s3_bucket.s3_bucket_arn}/*",
+#     ]
 
-  bucket      = module.s3_bucket.s3_bucket_id
-  eventbridge = true
-}
+#     # See https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html#edit-vpc-endpoint-policy-s3
+#     condition {
+#       test     = "ArnEquals"
+#       variable = "aws:PrincipalArn"
+#       values   = [module.lambda_receiver.lambda_role_arn]
+#     }
+#   }
+# }
 
-data "aws_iam_policy_document" "endpoint" {
-  statement {
-    sid = "RestrictBucketAccessToIAMRole"
+# data "aws_iam_policy_document" "bucket" {
+#   statement {
+#     sid = "RestrictBucketAccessToIAMRole"
 
-    principals {
-      type        = "AWS"
-      identifiers = ["*"]
-    }
+#     principals {
+#       type        = "AWS"
+#       identifiers = [module.lambda_receiver.lambda_role_arn]
+#     }
 
-    actions = [
-      "s3:PutObject",
-    ]
+#     actions = [
+#       "s3:PutObject",
+#     ]
 
-    resources = [
-      "${module.s3_bucket.s3_bucket_arn}/*",
-    ]
-
-    # See https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html#edit-vpc-endpoint-policy-s3
-    condition {
-      test     = "ArnEquals"
-      variable = "aws:PrincipalArn"
-      values   = [module.lambda_receiver.lambda_role_arn]
-    }
-  }
-}
-
-data "aws_iam_policy_document" "bucket" {
-  statement {
-    sid = "RestrictBucketAccessToIAMRole"
-
-    principals {
-      type        = "AWS"
-      identifiers = [module.lambda_receiver.lambda_role_arn]
-    }
-
-    actions = [
-      "s3:PutObject",
-    ]
-
-    resources = [
-      "${module.s3_bucket.s3_bucket_arn}/*",
-    ]
-  }
-}
+#     resources = [
+#       "${module.s3_bucket.s3_bucket_arn}/*",
+#     ]
+#   }
+# }
