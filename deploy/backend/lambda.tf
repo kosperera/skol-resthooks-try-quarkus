@@ -6,6 +6,7 @@ module "lambda_receiver" {
   handler       = "io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler"
   runtime       = "java21"
   architectures = ["arm64"]
+  timeout       = 60 # Max: 900 (15 mins)
   publish       = true
 
   create_package = false
@@ -27,47 +28,47 @@ module "lambda_receiver" {
   create_role = true
 }
 
-# data "aws_iam_policy_document" "endpoint" {
-#   statement {
-#     sid = "RestrictBucketAccessToIAMRole"
+data "aws_iam_policy_document" "endpoint" {
+  statement {
+    sid = "RestrictBucketAccessToIAMRole"
 
-#     principals {
-#       type        = "AWS"
-#       identifiers = ["*"]
-#     }
+    principals {
+      type        = "AWS"
+      identifiers = ["*"]
+    }
 
-#     actions = [
-#       "s3:PutObject",
-#     ]
+    actions = [
+      "s3:PutObject",
+    ]
 
-#     resources = [
-#       "${module.s3_bucket.s3_bucket_arn}/*",
-#     ]
+    resources = [
+      "${module.s3_bucket.s3_bucket_arn}/*",
+    ]
 
-#     # See https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html#edit-vpc-endpoint-policy-s3
-#     condition {
-#       test     = "ArnEquals"
-#       variable = "aws:PrincipalArn"
-#       values   = [module.lambda_receiver.lambda_role_arn]
-#     }
-#   }
-# }
+    # See https://docs.aws.amazon.com/vpc/latest/privatelink/vpc-endpoints-s3.html#edit-vpc-endpoint-policy-s3
+    condition {
+      test     = "ArnEquals"
+      variable = "aws:PrincipalArn"
+      values   = [module.lambda_receiver.lambda_role_arn]
+    }
+  }
+}
 
-# data "aws_iam_policy_document" "bucket" {
-#   statement {
-#     sid = "RestrictBucketAccessToIAMRole"
+data "aws_iam_policy_document" "bucket" {
+  statement {
+    sid = "RestrictBucketAccessToIAMRole"
 
-#     principals {
-#       type        = "AWS"
-#       identifiers = [module.lambda_receiver.lambda_role_arn]
-#     }
+    principals {
+      type        = "AWS"
+      identifiers = [module.lambda_receiver.lambda_role_arn]
+    }
 
-#     actions = [
-#       "s3:PutObject",
-#     ]
+    actions = [
+      "s3:PutObject",
+    ]
 
-#     resources = [
-#       "${module.s3_bucket.s3_bucket_arn}/*",
-#     ]
-#   }
-# }
+    resources = [
+      "${module.s3_bucket.s3_bucket_arn}/*",
+    ]
+  }
+}

@@ -142,8 +142,8 @@ module "s3_bucket" {
 
   bucket = "sb-s3-kitchensync-receiver-01"
 
-  # attach_policy = true
-  # policy = data.aws_iam_policy_document.bucket.json
+  attach_policy = true
+  policy = data.aws_iam_policy_document.bucket.json
 }
 
 module "s3_notify" {
