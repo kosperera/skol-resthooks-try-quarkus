@@ -57,14 +57,16 @@ public class ReceiveEventHandler implements RequestHandler<APIGatewayV2HTTPEvent
                     PutObjectRequest.builder().bucket(target).key(filepath).contentType(Mimetype.MIMETYPE_TEXT_PLAIN).build(),
                     RequestBody.fromString(content));
 
+            Log.accepted(logger, requestId, correlationId, eventKind, target, filepath);
+
             return OK(new Ack(UUID.fromString(correlationId)));
 
         } catch (S3Exception ex) {
-            Log.UploadFailed(logger, ex);
+            Log.uploadFailed(logger, ex);
             return BadRequest(ex);
 
         } catch (JacksonException jex) {
-            Log.JsonParseFailed(logger, jex);
+            Log.jsonParseFailed(logger, jex);
             return BadRequest(jex);
         }
     }
@@ -84,13 +86,20 @@ public class ReceiveEventHandler implements RequestHandler<APIGatewayV2HTTPEvent
     }
 
     static class Log {
-        static void JsonParseFailed(final LambdaLogger logger, JacksonException ex) {
+        static void accepted(final LambdaLogger logger, String requestId, String correlationId, String event, String bucket, String filename) {
+            logger.log(
+                "Request %1$s accepted: (correlation_id = %2$s, event = %3$s, path = %4$s/%5$s)".formatted(
+                    requestId, correlationId, event, bucket, filename),
+                LogLevel.INFO);
+        }
+
+        static void jsonParseFailed(final LambdaLogger logger, JacksonException ex) {
             logger.log(
                 "Failed to deserialize request data: %1$s. %2$s".formatted(ex.getMessage(), ex.getStackTrace()),
                 LogLevel.FATAL);
         }
 
-        static void UploadFailed(final LambdaLogger logger, S3Exception ex) {
+        static void uploadFailed(final LambdaLogger logger, S3Exception ex) {
             logger.log(
                 "Failed to upload the request data: %1$s. %2$s".formatted(ex.getMessage(), ex.getStackTrace()),
                 LogLevel.ERROR);
