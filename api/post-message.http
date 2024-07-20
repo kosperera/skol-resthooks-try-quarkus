@@ -1,3 +1,11 @@
+POST https://{{$dotenv HOST}}/v1/kitchen/messaging/ingress HTTP/1.1
+Content-Type: application/json
+X-API-KEY: {{$dotenv HOST_API_KEY}}
+
+<@ ./sample-order.json
+
+###
+
 # @name authz
 POST https://kitchensync.auth.us-east-1.amazoncognito.com/oauth2/token HTTP/1.1
 Content-Type: application/x-www-form-urlencoded
@@ -7,14 +15,6 @@ grant_type=client_credentials
 &scope=kitchensync/post
 &client_id={{$dotenv SAMPLE_CLIENT_ID}}
 &client_secret={{$dotenv SAMPLE_CLIENT_SECRET}}
-
-###
-
-POST https://{{$dotenv HOST}}/v1/kitchen/messaging/ingress HTTP/1.1
-Content-Type: application/json
-X-API-KEY: {{$dotenv HOST_API_KEY}}
-
-<@ ./sample-order.json
 
 ###
 
