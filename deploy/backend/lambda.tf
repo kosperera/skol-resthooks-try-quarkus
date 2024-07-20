@@ -1,8 +1,8 @@
 module "lambda_receiver" {
   source = "terraform-aws-modules/lambda/aws"
 
-  function_name = "sb-fn-${basename(path.cwd)}"
-  description   = "Quarkus greets to whomever ..."
+  function_name = "sb-fn-kitchenysnc-receiver-01" # ${basename(path.cwd)}
+  description   = "Accepts HTTP requests via API Gateway and writes the request body into an s3 bucket instead of a queue."
   handler       = "io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler"
   runtime       = "java21"
   architectures = ["arm64"]
