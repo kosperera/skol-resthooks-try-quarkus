@@ -3,9 +3,13 @@ module "lambda_receiver" {
 
   function_name = "sb-fn-kitchenysnc-receiver-01" # ${basename(path.cwd)}
   description   = "Accepts HTTP requests via API Gateway and writes the request body into an s3 bucket instead of a queue."
+  
   handler       = "io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler"
-  runtime       = "java21"
+  # Running native.
+  # runtime       = "java21"
+  runtime = "provided.al2023"
   architectures = ["arm64"]
+
   timeout       = 60 # Max: 900 (15 mins)
   publish       = true
 
@@ -22,7 +26,8 @@ module "lambda_receiver" {
   }
 
   environment_variables = {
-    BUCKET_NAME = module.s3_bucket.s3_bucket_id
+    BUCKET_NAME             = module.s3_bucket.s3_bucket_id
+    DISABLE_SIGNAL_HANDLERS = true
   }
 
   create_role = true
