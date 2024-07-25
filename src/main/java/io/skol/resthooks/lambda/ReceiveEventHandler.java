@@ -1,6 +1,13 @@
 package io.skol.resthooks.lambda;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.UUID;
+import javax.swing.text.DateFormatter;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import com.amazonaws.services.lambda.runtime.Context;
 import com.amazonaws.services.lambda.runtime.LambdaLogger;
@@ -21,9 +28,9 @@ import software.amazon.awssdk.services.s3.model.S3Exception;
 
 public class ReceiveEventHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
-    final static String FILE_NAME_FORMAT = "%1$s/%2$s/%3$s-%4$s.json";
+    final static String FILE_NAME_FORMAT = "%1$s/%2$tY/%2$tm/%2$td/%3$s/%4$s-%5$s.json";
 
-    @ConfigProperty(name = "BUCKET_NAME")
+    @ConfigProperty(name = "DESTINATION_BUCKET_NAME", defaultValue = "sb-s3-kitchensync-receiver-00")
     String target;
 
     @Inject
@@ -41,7 +48,7 @@ public class ReceiveEventHandler implements RequestHandler<APIGatewayV2HTTPEvent
         final String source = input.getHeaders().getOrDefault(KnownHttpHeaders.SOURCE, "others");
         final String eventKind = input.getHeaders().getOrDefault(KnownHttpHeaders.EVENT_KIND, "noop");
         final String requestId = input.getHeaders().getOrDefault(KnownHttpHeaders.REQUEST_ID, context.getAwsRequestId());
-
+        
         final String content = input.getBody();
 
         try {
@@ -50,7 +57,7 @@ public class ReceiveEventHandler implements RequestHandler<APIGatewayV2HTTPEvent
             final String correlationId = input.getHeaders().getOrDefault(
                     KnownHttpHeaders.CORRELATION_ID,
                     im.metadata().get("correlation_id").asText(requestId));
-            final String filepath = FILE_NAME_FORMAT.formatted(env, eventKind, source, correlationId)
+            final String filepath = FILE_NAME_FORMAT.formatted(env, LocalDate.now(), eventKind, source, correlationId)
                                                     .toLowerCase();
 
             s3.putObject(

@@ -1,6 +1,7 @@
 package io.skol.resthooks.lambda;
 
 public interface KnownHttpHeaders {
+    static final String DATE = "date";
     static final String ENVIRONMENT = "x-environment";
     static final String EVENT_KIND = "x-event-kind";
     static final String SOURCE = "x-source";

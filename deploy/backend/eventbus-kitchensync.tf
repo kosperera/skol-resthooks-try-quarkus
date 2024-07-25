@@ -17,7 +17,7 @@ module "eventbridge" {
   targets = {
     order_notifications = [
       # Send to a Queue and a Pipe will pick it up and
-      # Send it to the Lambda function (Backend Webhook Endpoint).
+      # send it to the Lambda function (Backend Webhook Endpoint).
       {
         name            = "send-to-lambdawebapi-queue"
         arn             = module.sqs_lambdawebapi.queue_arn
@@ -100,55 +100,4 @@ resource "aws_cloudwatch_event_connection" "lambdawebapi" {
       value = var.backend_api_key
     }
   }
-}
-
-# Large Messages are send to an S3 Bucket and 
-# EventBridge will forward that to a Queue.
-
-module "default_bridge" {
-  source = "terraform-aws-modules/eventbridge/aws"
-
-  create_bus = false
-
-  rules = {
-    large_notifications = {
-      description = "Captures all created order notifications (bulk or large payloads)",
-      event_pattern = jsonencode({
-        "source" : ["aws.s3"],
-        "detail-type" : ["Object Created"]
-        "detail" : { "bucket" : { "name" : [module.s3_bucket.s3_bucket_id] } }
-      })
-      state = "ENABLED"
-    }
-  }
-
-  # Send to a Queue and a Lambda will pick it up.
-  targets = {
-    large_notifications = [
-      # Send to a Queue and a Pipe will pick it up and
-      # Send it to the Lambda function (Backend Webhook Endpoint).
-      {
-        name            = "send-to-lambdawebapi-queue"
-        arn             = module.sqs_lambdawebapi.queue_arn
-        dead_letter_arn = module.sqs_lambdawebapi.dead_letter_queue_arn
-        target_id       = "send-to-lambdawebapi-queue"
-      }
-    ]
-  }
-}
-
-module "s3_bucket" {
-  source = "terraform-aws-modules/s3-bucket/aws"
-
-  bucket = "sb-s3-kitchensync-receiver-01"
-
-  attach_policy = true
-  policy = data.aws_iam_policy_document.bucket.json
-}
-
-module "s3_notify" {
-  source = "terraform-aws-modules/s3-bucket/aws//modules/notification"
-
-  bucket      = module.s3_bucket.s3_bucket_id
-  eventbridge = true
 }

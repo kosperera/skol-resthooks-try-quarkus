@@ -3,15 +3,15 @@ module "lambda_receiver" {
 
   function_name = "sb-fn-kitchenysnc-receiver-01" # ${basename(path.cwd)}
   description   = "Accepts HTTP requests via API Gateway and writes the request body into an s3 bucket instead of a queue."
-  
-  handler       = "io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler"
+
+  handler = "io.quarkus.amazon.lambda.runtime.QuarkusStreamHandler"
   # Running native.
   # runtime       = "java21"
-  runtime = "provided.al2023"
+  runtime       = "provided.al2023"
   architectures = ["arm64"]
 
-  timeout       = 60 # Max: 900 (15 mins)
-  publish       = true
+  timeout = 7 # Max: 900 (15 mins)
+  publish = true
 
   create_package = false
 
@@ -26,11 +26,28 @@ module "lambda_receiver" {
   }
 
   environment_variables = {
-    BUCKET_NAME             = module.s3_bucket.s3_bucket_id
+    DESTINATION_BUCKET_NAME = module.s3_bucket.s3_bucket_id
     DISABLE_SIGNAL_HANDLERS = true
   }
 
   create_role = true
+}
+
+module "s3_bucket" {
+  source = "terraform-aws-modules/s3-bucket/aws"
+
+  bucket = "sb-s3-kitchensync-receiver-01"
+
+  attach_policy = true
+  policy = data.aws_iam_policy_document.bucket.json
+}
+
+# Broadcast bucket activities to Eventbridge.
+module "s3_notify" {
+  source = "terraform-aws-modules/s3-bucket/aws//modules/notification"
+
+  bucket      = module.s3_bucket.s3_bucket_id
+  eventbridge = true
 }
 
 data "aws_iam_policy_document" "endpoint" {
