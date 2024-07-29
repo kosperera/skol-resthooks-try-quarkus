@@ -1,4 +1,6 @@
-# skol-kitchensync
+# RESThooks on Quarkus Amazon Lambda (Java)
+
+<img align="center" alt="RESThooks" width="100%" src="./docs/Architecture.jpg" />
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
