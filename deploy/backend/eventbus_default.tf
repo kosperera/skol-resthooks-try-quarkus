@@ -1,13 +1,13 @@
-# Large Messages (Payloads) are send to an S3 Bucket and 
-# EventBridge will forward that to a Queue.
-module "default_bridge" {
+# The http v2 requests are sent to an s3 bucket and
+# the default bus queues it for the grab.
+module "eventbus_default" {
   source = "terraform-aws-modules/eventbridge/aws"
 
   create_bus = false
 
   rules = {
-    large_messages = {
-      description = "Captures all created order notifications (bulk or large payloads)",
+    an_event_v2 = {
+      description = "Captures all events (skinny, bulk or large payloads).",
       event_pattern = jsonencode({
         "source" : ["aws.s3"],
         "detail-type" : ["Object Created"]
@@ -19,14 +19,14 @@ module "default_bridge" {
 
   # Send to a Queue and a Lambda will pick it up.
   targets = {
-    large_messages = [
+    an_event_v2 = [
       # Send to a Queue and a Pipe will pick it up and
       # send it to the Lambda function (Backend Webhook Endpoint).
       {
-        name            = "send-to-lambdawebapi-queue"
-        arn             = module.sqs_lambdawebapi.queue_arn
-        dead_letter_arn = module.sqs_lambdawebapi.dead_letter_queue_arn
-        target_id       = "send-to-lambdawebapi-queue"
+        name            = "send-to-queue"
+        arn             = module.queue.queue_arn
+        dead_letter_arn = module.queue.dead_letter_queue_arn
+        target_id       = "send-to-queue"
       }
     ]
   }

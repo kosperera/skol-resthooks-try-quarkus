@@ -1,8 +1,8 @@
-module "apigateway" {
+module "http_api" {
   source = "terraform-aws-modules/apigateway-v2/aws"
 
-  name          = "sb-apig-v2-kitchensync-messaging-01"
-  description   = "My sb-apig-v2-kitchensync-messaging-01 HTTP API Gateway"
+  name          = "sb-apiv2-ksync-events-01"
+  description   = "The secured Web API module for publishing events to apps and services."
   protocol_type = "HTTP"
 
   create_domain_name = false
@@ -19,7 +19,8 @@ module "apigateway" {
   }
 
   routes = {
-    "POST /v1/messaging/publish" = {
+    # Writes the http request directly to a custom event bus.
+    "POST /v1/ingress/events" = {
 
       authorizer_key       = "cognito"
       authorization_type   = "JWT"
@@ -31,7 +32,7 @@ module "apigateway" {
         credentials_arn = module.apigateway_put_events_to_eventbridge_role.iam_role_arn
 
         request_parameters = {
-          EventBusName = module.eventbridge.eventbridge_bus_name,
+          EventBusName = module.eventbus.eventbridge_bus_name,
           Source       = "$request.header.X-SOURCE",
           DetailType   = "$request.header.X-EVENT-KIND",
           Detail       = "$request.body",
@@ -41,14 +42,16 @@ module "apigateway" {
         payload_format_version = "1.0"
       }
     },
-    "POST /v2/resthooks/events" = {
+
+    # Writes the http request to an s3 bucket using a lambda function.
+    "POST /v2/ingress/events" = {
 
       authorizer_key       = "cognito"
       authorization_type   = "JWT"
       authorization_scopes = aws_cognito_resource_server.resource.scope_identifiers
 
       integration = {
-        uri                    = module.lambda_receiver.lambda_function_arn
+        uri                    = module.func_http_v2_event.lambda_function_arn
         payload_format_version = "2.0"
       }
     }
@@ -82,8 +85,8 @@ data "aws_iam_policy_document" "apigateway_put_events_to_eventbridge_policy" {
   statement {
     sid       = "AllowPutEvents"
     actions   = ["events:PutEvents"]
-    resources = [module.eventbridge.eventbridge_bus_arn]
+    resources = [module.eventbus.eventbridge_bus_arn]
   }
 
-  depends_on = [module.eventbridge]
+  depends_on = [module.eventbus]
 }

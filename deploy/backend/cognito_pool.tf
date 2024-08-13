@@ -1,6 +1,6 @@
 # Source https://www.kitopi.com/post/authorization-in-machine-to-machine-integrations-using-amazon-cognito
 resource "aws_cognito_user_pool" "pool" {
-  name = "sb-usp-kitchensync-mtomauth-01"
+  name = "sb-cog-ksync-events-01"
 
   account_recovery_setting {
     recovery_mechanism {
@@ -18,7 +18,7 @@ resource "aws_cognito_user_pool" "pool" {
 }
 
 resource "aws_cognito_user_pool_domain" "domain" {
-  domain       = "kitchensync"
+  domain       = "skol"
   user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 }
 
@@ -30,12 +30,12 @@ resource "aws_cognito_resource_server" "resource" {
 
   scope {
     scope_name        = "post"
-    scope_description = "Publish notifications"
+    scope_description = "Broadcast events / notifications / messages."
   }
 }
 
 resource "aws_cognito_user_pool_client" "client" {
-  name         = "sb-upc-kitchensync-somesubscriber-01"
+  name         = "sb-upc-ksync-events-01"
   user_pool_id = join("", aws_cognito_user_pool.pool.*.id)
 
   access_token_validity                = 24

@@ -1,7 +1,7 @@
-module "sqs_lambdawebapi" {
+module "queue" {
   source = "terraform-aws-modules/sqs/aws"
 
-  name = "sb-sqs-kitchensync-lambdawebapi-01"
+  name = "sb-sqs-ksync-events-01"
 
   create_dlq = true
   redrive_policy = {

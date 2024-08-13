@@ -1,4 +1,4 @@
-package io.skol.resthooks.lambda;
+package io.skol.kitchensync.ingress.events;
 
 import java.time.LocalDate;
 import java.util.UUID;
@@ -20,7 +20,7 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 
-public class KitchenEventHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
+public class IngressEventHandler implements RequestHandler<APIGatewayV2HTTPEvent, APIGatewayV2HTTPResponse> {
 
     final static String FILE_NAME_FORMAT = "%1$s/%2$tY/%2$tm/%2$td/%3$s/%4$s-%5$s.json";
 

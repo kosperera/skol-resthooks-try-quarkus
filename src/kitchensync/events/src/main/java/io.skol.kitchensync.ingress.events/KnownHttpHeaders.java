@@ -1,4 +1,4 @@
-package io.skol.resthooks.lambda;
+package io.skol.kitchensync.ingress.events;
 
 public interface KnownHttpHeaders {
     static final String DATE = "date";

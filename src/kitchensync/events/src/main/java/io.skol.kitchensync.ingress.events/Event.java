@@ -1,4 +1,4 @@
-package io.skol.resthooks.lambda;
+package io.skol.kitchensync.ingress.events;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.quarkus.runtime.annotations.RegisterForReflection;

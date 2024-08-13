@@ -1,4 +1,4 @@
-package io.skol.resthooks.lambda;
+package io.skol.kitchensync.ingress.events;
 
 import java.util.UUID;
 import com.fasterxml.jackson.annotation.JsonProperty;
