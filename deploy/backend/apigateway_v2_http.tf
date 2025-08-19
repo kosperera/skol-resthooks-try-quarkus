@@ -29,7 +29,7 @@ module "http_api" {
       integration = {
         type            = "AWS_PROXY"
         subtype         = "EventBridge-PutEvents"
-        credentials_arn = module.apigateway_put_events_to_eventbridge_role.iam_role_arn
+        credentials_arn = module.apigateway_put_events_to_eventbridge_role.arn
 
         request_parameters = {
           EventBusName = module.eventbus.eventbridge_bus_name,
@@ -59,17 +59,30 @@ module "http_api" {
 }
 
 module "apigateway_put_events_to_eventbridge_role" {
-  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
+  source = "terraform-aws-modules/iam/aws//modules/iam-role"
 
-  create_role       = true
-  role_name         = "apigateway-put-events-to-eventbridge"
-  role_requires_mfa = false
+  create = true
+  name   = "apigateway-put-events-to-eventbridge"
+  #   role_requires_mfa = false
+  #   trusted_role_services = ["apigateway.amazonaws.com"]
+  trust_policy_permissions = {
+    TrustRoleAndServiceToAssume = {
+      actions = [
+        "sts:AssumeRole",
+        "sts:TagSession"
+      ]
+      principals = [
+        {
+          type        = "Service",
+          identifiers = ["apigateway.amazonaws.com"]
+        }
+      ]
+    }
+  }
 
-  trusted_role_services = ["apigateway.amazonaws.com"]
-
-  custom_role_policy_arns = [
-    module.apigateway_put_events_to_eventbridge_policy.arn
-  ]
+  policies = {
+    custom = module.apigateway_put_events_to_eventbridge_policy.arn
+  }
 }
 
 module "apigateway_put_events_to_eventbridge_policy" {
