@@ -1,73 +1,81 @@
-# RESThooks on Quarkus Amazon Lambda (Java)
+# RESThooks on Quarkus (Jakarta)
+
+This is a flavor of RESThooks implementation, but on Quarkus, the Supersonic Subatomic Jakarta Framework.
 
 <img align="center" alt="RESThooks" width="100%" src="./docs/Architecture.jpg" />
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
 
-## Running the application in dev mode
+> Originally, this was created to tryout AOT-like native images for Serverless Lambdas on AWS.
 
-You can run your application in dev mode that enables live coding using:
+## About this repo
 
-```shell script
-./mvnw clean install compile quarkus:dev
-```
+In case you were wondering, this code is:
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+- Originally, written on a Mac with Development Container, in Georgia, US.
+- Written in Jakarta with Visual Studio Code
+- Built and packaged with Quarkus and GraalVM, thanks to Docker
+- Pub/Sub as Fanout on Amazon EventBridge
+- Served [on AWS](https://aws.amazon.com/products/application-integration/), thanks to Terraform
 
-## Packaging and running the application
 
-The application can be packaged using:
 
-```shell script
-./mvnw clean install package
-```
+## Quick start
 
-It produces the `quarkus-run.jar` file in the `target/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `target/quarkus-app/lib/` directory.
+[![Open in Dev Container](https://img.shields.io/static/v1?style=for-the-badge&label=Dev+Container&message=Open&color=blue&logo=visualstudiocode)](https://vscode.dev/redirect?url=vscode://ms-vscode-remote.remote-containers/cloneInVolume?url=https://github.com/kosperera/skol-resthooks-try-quarkus)
 
-The application is now runnable using `java -jar target/quarkus-app/quarkus-run.jar`.
+You can also run this repo locally by following these repetitive steps:
 
-If you want to build an _über-jar_, execute the following command:
+1. You want to ensure this repo is cloned to your local machine, and
+2. Open it in Visual Studio Code.
 
-```shell script
-./mvnw clean install package -Dquarkus.package.jar.type=uber-jar
-```
+See pre-built dev container images in [Microsoft Registry](https://mcr.microsoft.com/en-us/catalog?search=devcontainers) for other variations that suites your hardware.
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar target/*-runner.jar`.
+## Publishing
 
-## Creating a native executable
+At present this codebase is published to AWS using Terraform. First, you want to make sure you are logged into `aws` CLI and Mock Server is up and running. *Mocking with the Postman API* is a good source to setup a few API endpoints with a mock server.
 
-You can create a native executable using:
+With Visual Studio Code:
 
-```shell script
-./mvnw clean install package -Dnative
-```
+- Package the lambda functions;
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
+  ```shell
+  ./mvnw clean install package -Dnative
+  ```
 
-```shell script
-./mvnw clean install package -Dnative -Dquarkus.native.container-build=true
-```
+- Switch to `/deploy/backend` folder to create AWS resources
 
-You can then execute your native executable with: `./target/skol-kitchensync-1.0.0-SNAPSHOT-runner`
+- Create a `terraform.tfvars` file according to `.tfvars.schema`
 
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/maven-tooling>.
+- Paste values from your Mock Server
 
-## Related Guides
+- Publish
 
-- AWS Lambda ([guide](https://quarkus.io/guides/aws-lambda)): Write AWS Lambda functions
-- Amazon S3 ([guide](https://docs.quarkiverse.io/quarkus-amazon-services/dev/amazon-s3.html)): Connect to Amazon S3 cloud storage
-- Amazon SQS ([guide](https://docs.quarkiverse.io/quarkus-amazon-services/dev/amazon-sqs.html)): Connect to Amazon SQS messaging queue service
+  ```shell
+  cd deploy/backend
+  terraform init -upgrade # Optional.
+  terraform plan
+  terraform apply -auto-approve
+  ```
 
-## Provided Code
+That's it. 
 
-### Amazon Lambda Integration example
 
-This example contains a Quarkus Greeting Lambda ready for Amazon.
 
-[Related guide section...](https://quarkus.io/guides/amazon-lambda)
+## Verifying
 
-> :warning: **INCOMPATIBLE WITH DEV MODE**: Amazon Lambda Binding is not compatible with dev mode yet!
+To verify if everything's working as expected, [Mocking with the Postman](https://www.youtube.com/watch?v=7BowehJJrbA) is one of the faster ways to setup a few API endpoints and a mock server. Then you can receive notifications!
+
+With Visual Studio Code:
+
+- Switch to `/api` folder to post http requests
+- Create a `.env` file according to `.env.schema`
+- Paste the values from AWS and your Mock Server
+- Send messages with `post-messages.http` file
+
+
+
+## License
+
+The source code is license under the [MIT license](#MIT-1-ov-file).
 

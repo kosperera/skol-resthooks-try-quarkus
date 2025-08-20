@@ -1,0 +1,4 @@
+# I use Postman as a mock server.
+# Learn more at https://learning.postman.com/docs/designing-and-developing-your-api/mocking-data/mock-with-api/
+backend_api_host =
+backend_api_key  =
