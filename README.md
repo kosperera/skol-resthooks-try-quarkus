@@ -37,13 +37,23 @@ At present this codebase is published to AWS using Terraform. First, you want to
 
 With Visual Studio Code:
 
+- Refresh AWS credentials;
+
+  ```shell
+  # Set defaults
+  export AWS_{DEFAULT_,,EB_}PROFILE="<profile-name>"
+  export AWS_PROFILE_REGION="$(aws configure get region)"
+  # Export credentials
+  eval "$(aws configure export-credentials --format env)"
+  ```
+
 - Package the lambda functions;
 
   ```shell
   ./mvnw clean install package -Dnative
   ```
 
-- Switch to `/deploy/backend` folder to create AWS resources
+- Switch to `/deployments/backend` folder to create AWS resources
 
 - Create a `terraform.tfvars` file according to `.tfvars.schema`
 
@@ -52,7 +62,7 @@ With Visual Studio Code:
 - Publish
 
   ```shell
-  cd deploy/backend
+  cd deployments/backend
   terraform init -upgrade # Optional.
   terraform plan
   terraform apply -auto-approve
@@ -68,7 +78,7 @@ To verify if everything's working as expected, [Mocking with the Postman](https:
 
 With Visual Studio Code:
 
-- Switch to `/api` folder to post http requests
+- Switch to `/tests/e2e` folder to tryout HTTP requests
 - Create a `.env` file according to `.env.schema`
 - Paste the values from AWS and your Mock Server
 - Send messages with `post-messages.http` file
